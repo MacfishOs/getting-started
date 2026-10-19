@@ -29,7 +29,7 @@ equivalents.
 | [terminal](https://github.com/cutefishos/terminal) | Recommended | Terminal |
 | [xdg-desktop-portal-cutefish](https://github.com/cutefishos/xdg-desktop-portal-cutefish) | Recommended | File chooser, screen sharing and settings for sandboxed and browser apps |
 | [cutefish-dm](https://github.com/cutefishos/cutefish-dm) | Optional | Login screen; skip it if you keep SDDM, GDM or LightDM |
-| [qt-plugins](https://github.com/cutefishos/qt-plugins) | Optional | Makes Qt 6 applications follow the Cutefish style and scrolling |
+| [qt-plugins](https://github.com/cutefishos/qt-plugins) | Optional | Qt 6 apps follow dark mode, system fonts and icons, open the Cutefish file chooser, and scroll like Cutefish apps |
 | [text-editor](https://github.com/cutefishos/text-editor) | Optional | Text editor |
 | [video-player](https://github.com/cutefishos/video-player) | Optional | Video player |
 | [calendar](https://github.com/cutefishos/calendar) | Optional | Calendar |
