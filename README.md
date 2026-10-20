@@ -34,6 +34,7 @@ equivalents.
 | [video-player](https://github.com/cutefishos/video-player) | Optional | Video player |
 | [calendar](https://github.com/cutefishos/calendar) | Optional | Calendar |
 | [system-monitor](https://github.com/cutefishos/system-monitor) | Optional | System monitor |
+| [cutefish-computer-use](https://github.com/cutefishos/cutefish-computer-use) | Optional | MCP server that lets agents such as Claude Code and Codex see and use the desktop, with your permission |
 
 Without the recommended components the desktop runs, but the Settings and
 Terminal icons pinned to the dock open nothing.
@@ -49,7 +50,7 @@ Terminal icons pinned to the dock open nothing.
 - A C++20 compiler (GCC or Clang) and Clang, which builds Skia.
 - Network access while building cutefish-toolkit, which downloads Skia.
 - Optional components: Qt 6 for qt-plugins, libmpv 0.35 or newer for
-  video-player.
+  video-player, Rust and Cargo for cutefish-computer-use.
 - gettext's `msgfmt` for the translations. Without it everything still
   builds, in English only.
 
@@ -86,6 +87,7 @@ Add these for the optional components you want:
 | video-player | `libmpv-dev` |
 | calendar | `libcurl4-openssl-dev libical-dev` |
 | system-monitor | none beyond the list above |
+| cutefish-computer-use | `rustc cargo librust-wayland-client-dev librust-wayland-scanner-dev librust-wayland-protocols-dev librust-wayland-backend-dev librust-serde-json-dev librust-png-dev librust-jpeg-encoder-dev librust-base64-dev librust-bitflags-dev librust-libc-dev librust-memmap2-dev` |
 
 To build the tests as well, add `libgtest-dev` and configure with
 `-DBUILD_TESTING=ON` instead of `OFF` in step 3.
@@ -99,7 +101,8 @@ want.
 mkdir -p ~/cutefish && cd ~/cutefish
 for repo in cutefish-toolkit cutefish-framework cutefish-core cutefish-compositor \
     filemanager icons wallpapers settings terminal xdg-desktop-portal-cutefish \
-    cutefish-dm qt-plugins text-editor video-player calendar system-monitor; do
+    cutefish-dm qt-plugins text-editor video-player calendar system-monitor \
+    cutefish-computer-use; do
     git clone https://github.com/cutefishos/$repo.git
 done
 ```
@@ -132,6 +135,17 @@ done
 
 The loop stops at the first failure; fix it, usually a missing package, and
 run it again. cutefish-toolkit takes the longest, since it builds Skia.
+
+cutefish-computer-use is built with Cargo instead:
+
+```shell
+cd ~/cutefish/cutefish-computer-use
+cargo build --release
+sudo install target/release/cutefish-computer-use /usr/bin/
+```
+
+To let an agent use it, see
+[Letting agents use the desktop](https://cutefish.org/blog/letting-agents-use-the-desktop).
 
 To build the compositor without X11 application support, which also drops
 the `libxcb-*` build dependencies, configure it with
@@ -182,7 +196,8 @@ To go back, run the same commands with the names swapped.
 ## Updating
 
 Pull every repository, fetch Skia again in case its pinned revision changed,
-and run the loop in step 3 again:
+and run the loop in step 3 again, along with the Cargo build of
+cutefish-computer-use if you have it:
 
 ```shell
 cd ~/cutefish
@@ -202,6 +217,7 @@ cd ~/cutefish
 for manifest in build/*/install_manifest.txt; do
     xargs -d '\n' sudo rm -f -- < "$manifest"
 done
+sudo rm -f /usr/bin/cutefish-computer-use
 ```
 
 Switch back to your previous display manager first if you enabled
@@ -229,6 +245,10 @@ provides each module below; on Fedora, `sudo dnf install
 | video-player | `mpv` (>= 2.0, from libmpv 0.35) |
 | calendar | `libcurl`, `libical` |
 | qt-plugins | Qt 6 Core, Gui, Widgets, DBus, Quick and their private headers; `librsvg-2.0` |
+
+cutefish-computer-use's `.cargo/config.toml` builds offline against Debian's
+packaged crates in `/usr/share/cargo/registry`. Elsewhere, delete that file
+and Cargo fetches the same crates from crates.io.
 
 Besides libraries, the build needs `git`, `cmake`, `ninja`, `pkg-config`,
 `clang`, `python3`, gettext (for translations) and `gtk-update-icon-cache`
